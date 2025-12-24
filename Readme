@@ -31,11 +31,11 @@ PE File
 │ ("MZ")                       │
 ├──────────────────────────────┤
 │ DOS Stub                     │
-│ ("This program cannot...")  │
+│ ("This program cannot...")   │
 ├──────────────────────────────┤
 │ NT Headers ("PE\0\0")        │
 │  ├─ File Header              │
-│  └─ Optional Header ⚠️       │
+│  └─ Optional Header ⚠        │
 ├──────────────────────────────┤
 │ Section Table                │
 ├──────────────────────────────┤
@@ -54,10 +54,8 @@ IMAGE_DOS_HEADER
 e_lfanew → offset للـ PE Header
 
 
-
 #📌 الويندوز يقفز مباشرة للـ NT Header
 #(الباقي تاريخ)
-
 
 
 🧠 3️⃣ NT Headers (قلب الـ PE)
@@ -68,27 +66,29 @@ IMAGE_NT_HEADERS
  ├─ File Header
  └─ Optional Header (مش optional فعليًا)
 
+
 #📄 4️⃣ File Header
-| Field            | وظيفة       |
-| ---------------- | ----------- |
-| Machine          | x86 / x64   |
-| NumberOfSections | عدد الأقسام |
-| Characteristics  | DLL؟ EXE؟   |
+| Field            | وظيفة         |
+|------------------|---------------|
+| Machine          | x86 / x64     |
+| NumberOfSections | عدد الأقسام   |
+| Characteristics  | DLL؟ EXE؟     |
 
 📌 هنا الويندوز يعرف:
 ده برنامج ولا مكتبة؟
+
 
 #🧬 5️⃣ Optional Header (الأهم 🔥)
 #ده خريطة التحميل في الرام
 #📌 ده اللي يربط PE بالـ RAM مباشرة
 
-| Field               | معنى                     |
-| ------------------- | ------------------------ |
-| AddressOfEntryPoint | نقطة البداية             |
-| ImageBase           | العنوان المفضّل في الرام |
-| SizeOfImage         | حجم الذاكرة              |
-| SectionAlignment    | محاذاة الرام             |
-| DataDirectory       | Import / Export / TLS    |
+| Field               | معنى                       |
+|---------------------|----------------------------|
+| AddressOfEntryPoint | نقطة البداية               |
+| ImageBase           | العنوان المفضّل في الرام   |
+| SizeOfImage         | حجم الذاكرة                |
+| SectionAlignment    | محاذاة الرام               |
+| DataDirectory       | Import / Export / TLS      |
 
 
 #🚪 6️⃣ Entry Point (EP)
@@ -100,6 +100,7 @@ IMAGE_NT_HEADERS
 #  DLL → DllMain
 EntryPoint → RVA
 
+
 #🧱 7️⃣ Sections (تقسيم التنفيذ)
 ┌──────────┬──────────┬──────────┐
 │ .text    │ .data    │ .rdata   │
@@ -109,7 +110,7 @@ EntryPoint → RVA
 
 #أشهر Sections:
 | Section | وظيفة           |
-| ------- | --------------- |
+|---------|----------------|
 | .text   | الكود           |
 | .data   | بيانات متغيرة   |
 | .rdata  | Strings / Const |
@@ -121,13 +122,13 @@ EntryPoint → RVA
 
 #📌 Permissions مهمة جدًا 👇
 
+
 #🔐 8️⃣ Sections → RAM Permissions
 Section        RAM Permission
 --------------------------------
 .text          READ + EXECUTE
 .data          READ + WRITE
 .rdata         READ
-
 
 
 🚨 أي خلل:
@@ -150,8 +151,9 @@ kernel32.dll
 2- يربط العناوين
 3- يحطها في IAT
 
+
 #🔄 1️⃣0️⃣ Relocations (لو العنوان اتغير)
- لو
+لو
 ImageBase --> مش متاح
 #
 
@@ -162,7 +164,6 @@ ImageBase --> مش متاح
     يصلّح العناوين
 
 📌 ده بيحصل كتير بسبب ASLR
-
 
 
 #🧠 1️⃣1️⃣ PE → RAM Lifecycle
@@ -181,14 +182,16 @@ Set Memory Permissions
       ↓
 Jump to Entry Point
 
+
 #🧠 1️⃣2️⃣ PE vs In-Memory Execution
 #📌 EDR يقارن ده
-| طبيعي          | مشبوه                    |
-| -------------- | ------------------------ |
-| File-backed    | No file                  |
-| Sections واضحة | Anonymous memory         |
-| Valid EP       | Thread start في Heap     |
-| Import Table   | API resolved dynamically |
+| طبيعي          | مشبوه                     |
+|-----------------|---------------------------|
+| File-backed     | No file                   |
+| Sections واضحة | Anonymous memory          |
+| Valid EP        | Thread start في Heap      |
+| Import Table    | API resolved dynamically |
+
 
 #🧩 1️⃣3️⃣ Visual RAM Mapping of PE
 Virtual Memory
@@ -206,6 +209,7 @@ Virtual Memory
 │ Stack  (RW)                 │
 └────────────────────────────┘
 
+
 #🛡️ 1️⃣4️⃣ Blue Team / EDR بيركّز على:
 Entry Point مش طبيعي
 
@@ -216,6 +220,7 @@ Missing Import Table
 PE headers في RAM بدون File
 
 Modified .text section
+
 
 #🧠 الخلاصة الذهبية
 PE = Blueprint
